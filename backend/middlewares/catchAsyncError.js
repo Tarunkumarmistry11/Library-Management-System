@@ -7,10 +7,9 @@
  * @param {Function} theFunction - The async function to be wrapped.
  * @returns {Function} Middleware function that handles errors.
  */
-const asyncError = (theFunction) => (req, res, next) => {
+const asyncAsyncErrors = (theFunction) => (req, res, next) => {
     Promise.resolve(theFunction(req, res, next)).catch(next);
   };
   
-  // Export the middleware
-  module.exports = asyncError;
+  module.exports = asyncAsyncErrors;
   

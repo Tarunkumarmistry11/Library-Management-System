@@ -35,9 +35,9 @@ const userSchema = new mongoose.Schema(
     },
 
     // TODO: Track whether the user's account is verified
-    accountVerified: { 
-      type: Boolean, 
-      default: false 
+    accountVerified: {
+      type: Boolean,
+      default: false,
     },
 
     // TODO: Maintain a list of borrowed books by the user
@@ -64,17 +64,32 @@ const userSchema = new mongoose.Schema(
     },
 
     // TODO: Store verification code and expiration time for email verification
-    verificationCode: Number, 
+    verificationCode: Number,
     verificationCodeExpire: Date,
 
     // TODO: Store reset token and expiration time for password recovery
-    resetPasswordToken: String, 
-    resetPasswordExpire: Date, 
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     timestamps: true, // TODO: Automatically add createdAt and updatedAt fields
   }
 );
+
+// TODO: Method to generate a random 5-digit verification code
+userSchema.methods.generateVerificationCode = function () {
+  const generateRandomFiveDigitNumber = () => {
+    const firstDigit = Math.floor(Math.random() * 9) + 1; // Ensure the first digit isn't 0
+    const remainingDigits = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, "0");
+    return parseInt(firstDigit + remainingDigits);
+  };
+
+  this.verificationCode = generateRandomFiveDigitNumber();
+  this.verificationCodeExpire = Date.now() + 15 * 60 * 1000; // Expires in 15 minutes
+  return this.verificationCode;
+};
 
 // TODO: Export the User model for database interactions
 module.exports = mongoose.model("User", userSchema);
