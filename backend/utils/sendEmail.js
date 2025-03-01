@@ -8,7 +8,7 @@ const sendEmail = async ({ email, subject, message }) => {
       host: process.env.SMTP_HOST,
       service: process.env.SMTP_SERVICE,
       port: process.env.SMTP_PORT,
-      secure: false,
+      secure: true,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
@@ -19,7 +19,7 @@ const sendEmail = async ({ email, subject, message }) => {
       from: process.env.SMTP_FROM_EMAIL,
       to: email,
       subject,
-      text: message,
+      html: message,
     };
 
     return await transporter.sendMail(mailOptions);
