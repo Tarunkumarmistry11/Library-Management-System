@@ -1,3 +1,4 @@
+const generateVerificationOtpEmailTemplate = require("./emailTemplate");
 const sendEmail = require("./sendEmail"); // Ensure this function is correctly imported
 // const generateVerificationOtpEmailTemplate = require("./emailTemplate"); // Import the template function
 
@@ -27,4 +28,4 @@ const sendVerificationCode = async (verificationCode, email, res) => {
 };
 
 // TODO: Export the function for use in other files
-module.exports = sendVerificationCode;
+module.exports = { sendVerificationCode };

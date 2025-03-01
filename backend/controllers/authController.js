@@ -1,5 +1,5 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
-const ErrorHandler = require("../middlewares/errorMiddlewares");
+const { ErrorHandler } = require("../middlewares/errorMiddlewares");
 const User = require("../models/userModel"); 
 const bcrypt = require("bcrypt");
 const { sendVerificationCode } = require("../utils/sendVerificationCode");
@@ -44,24 +44,33 @@ const register = catchAsyncErrors(async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const user = await User.create({
+    const user = new User({
       name,
       email,
       password: hashedPassword,
     });
 
-    // Generate verification code for this user
-    const verificationCode = user.generateVerificationCode();
+    // Generate verification code (Ensure this function exists in User model)
+    user.verificationCode = (Math.floor(Math.random() * 900000) + 100000).toString();
+
 
     // Save user with verification code
     await user.save();
 
     // Send verification email
-    await sendVerificationCode(verificationCode, email, res);
+    await sendVerificationCode(user.verificationCode, email, res);
+
+    // Send response to client
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully. Verification code sent.",
+    });
 
   } catch (error) {
-    return next(new ErrorHandler("Registration failed.", 500));
+    console.error("Registration Error:", error); // Log error for debugging
+    return next(new ErrorHandler(error.message || "Registration failed.", 500));
   }
 });
 
-module.exports = register;
+module.exports = { register };
+
