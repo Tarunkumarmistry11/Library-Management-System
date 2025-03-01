@@ -3,6 +3,7 @@ const { ErrorHandler } = require("../middlewares/errorMiddlewares");
 const User = require("../models/userModel"); 
 const bcrypt = require("bcrypt");
 const { sendVerificationCode } = require("../utils/sendVerificationCode");
+const { sendToken } = require("../utils/sendToken");
 
 const register = catchAsyncErrors(async (req, res, next) => {
   try {
@@ -72,5 +73,51 @@ const register = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-module.exports = { register };
+const verifyOTP = catchAsyncErrors(async (req, res, next) => {
+  const { email, otp } = req.body;
+  if(!email || !otp) {
+    return next(new ErrorHandler("Please enter email and OTP", 400));
+  }
+  try {
+    const userAllEntries = await User.find({
+      email,
+      accountVerified: false,
+    }).sort({ createdAt: -1 });
+
+    if (userAllEntries.length === 0) {
+      return next(new ErrorHandler("User not found", 404));
+    }
+
+    let user;
+    if(userAllEntries.length > 1) {
+      user = userAllEntries[0];
+      await User.deleteMany({ 
+        _id: { $ne: user._id },
+        email,
+        accountVerified: false,
+      });
+    } else {
+      user = userAllEntries[0];
+    }
+
+    if (user.verificationCode !== Number(otp)) {
+      return next(new ErrorHandler("Invalid OTP", 400));
+    }
+    const currentTime = Date.now();
+    const verificationCodeExpire = new Date(user.verificationCodeExpire).getTime();
+    if (currentTime > verificationCodeExpire) {
+      return next(new ErrorHandler("OTP expired", 400));
+    }
+    user.accountVerified = true;
+    user.verificationCode = null;
+    user.verificationCodeExpire = null;
+    await user.save({ validateModifiedOnly: true });
+
+    sendToken(user, 200, "Account verified successfully", res);
+  } catch (error) {
+    return next(new ErrorHandler(error.message || "Verification failed.", 500));
+  }
+})
+
+module.exports = { register, verifyOTP };
 
