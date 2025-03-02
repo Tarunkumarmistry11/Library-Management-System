@@ -36,4 +36,8 @@ const generateVerificationOtpEmailTemplate = (otpCode) => {
     </div>`;
 };
 
+const generateForgotPasswordEmailTemplate = () => {
+  
+}
+
 module.exports = generateVerificationOtpEmailTemplate;

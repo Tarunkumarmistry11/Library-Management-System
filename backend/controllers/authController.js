@@ -5,7 +5,7 @@
 
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
 const { ErrorHandler } = require("../middlewares/errorMiddlewares");
-const User = require("../models/userModel"); 
+const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { sendVerificationCode } = require("../utils/sendVerificationCode");
 const { sendToken } = require("../utils/sendToken");
@@ -25,20 +25,32 @@ const register = catchAsyncErrors(async (req, res, next) => {
     }
 
     // Limit registration attempts for unverified users
-    const registrationAttemptsByUser = await User.find({ email, accountVerified: false });
+    const registrationAttemptsByUser = await User.find({
+      email,
+      accountVerified: false,
+    });
     if (registrationAttemptsByUser.length >= 5) {
-      return next(new ErrorHandler("You have exceeded the number of registration attempts. Please contact support.", 400));
+      return next(
+        new ErrorHandler(
+          "You have exceeded the number of registration attempts. Please contact support.",
+          400
+        )
+      );
     }
 
     if (password.length < 8 || password.length > 16) {
-      return next(new ErrorHandler("Password must be between 8 and 16 characters.", 400));
+      return next(
+        new ErrorHandler("Password must be between 8 and 16 characters.", 400)
+      );
     }
 
     // Hash password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate verification code
-    const verificationCode = (Math.floor(Math.random() * 900000) + 100000).toString();
+    const verificationCode = (
+      Math.floor(Math.random() * 900000) + 100000
+    ).toString();
 
     const user = new User({
       name,
@@ -71,7 +83,7 @@ const verifyOTP = catchAsyncErrors(async (req, res, next) => {
 
   try {
     const userAllEntries = await User.find({ email }).sort({ createdAt: -1 });
-    console.log("User entries found:",userAllEntries);
+    console.log("User entries found:", userAllEntries);
 
     if (userAllEntries.length === 0) {
       return next(new ErrorHandler("User not found", 404));
@@ -79,7 +91,9 @@ const verifyOTP = catchAsyncErrors(async (req, res, next) => {
 
     //Filter for unverified user
 
-    const unverifiedUser = userAllEntries.filter((user) => !user.accountVerified);
+    const unverifiedUser = userAllEntries.filter(
+      (user) => !user.accountVerified
+    );
     if (unverifiedUser.length === 0) {
       return next(new ErrorHandler("User already verified", 400));
     }
@@ -87,11 +101,14 @@ const verifyOTP = catchAsyncErrors(async (req, res, next) => {
     let user = userAllEntries[0];
 
     if (userAllEntries.length > 1) {
-      await User.deleteMany({ _id: { $ne: user._id }, email, accountVerified: false });
+      await User.deleteMany({
+        _id: { $ne: user._id },
+        email,
+        accountVerified: false,
+      });
     }
 
-    console.log("Stored OTP:",user.verificationCode);
-
+    console.log("Stored OTP:", user.verificationCode);
 
     if (user.verificationCode.toString() !== otp.toString()) {
       return next(new ErrorHandler("Invalid OTP", 400));
@@ -114,6 +131,7 @@ const verifyOTP = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+//Implement the login function
 const login = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -122,13 +140,15 @@ const login = catchAsyncErrors(async (req, res, next) => {
   }
 
   const emailNormalized = email.trim().toLowerCase();
-  const user = await User.findOne({ email: emailNormalized }).select("+password");
+  const user = await User.findOne({ email: emailNormalized }).select(
+    "+password"
+  );
 
   if (!user) {
     return next(new ErrorHandler("Invalid email", 400));
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const isPasswordMatched = await bcrypt.compare(password,hashedPassword);
+  const isPasswordMatched = await bcrypt.compare(password, hashedPassword);
 
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Invalid password", 400));
@@ -137,4 +157,49 @@ const login = catchAsyncErrors(async (req, res, next) => {
   sendToken(user, 200, "Login successful", res);
 });
 
-module.exports = { register, verifyOTP ,login };
+//Implement the logout function
+const logout = catchAsyncErrors(async (req, res, next) => {
+  res.cookie("token", "", {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+});
+
+const getUser = catchAsyncErrors(async (req, res, next) => {
+  const user = req.user;
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+// implement forgotPassword function
+const forgotPassword = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new ErrorHandler("User not found", 400));
+  }
+  const resetToken = user.getResetToken();
+  await user.save({ validateBeforeSave: false });
+  const resetPasswordUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
+  const message = generateForgotPasswordEmailTemplate(resetPasswordUrl);
+  try{
+    await sendEmail({ email: user.email, subject: "Bookworm Library Management System Password Recovery", message });
+    res.status(200).json({
+      success: true,
+      message: `Email sent to ${user.email} successfully.`,
+    });
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new ErrorHandler("Email could not be sent", 500));
+  }
+});
+
+
+module.exports = { register, verifyOTP, login, logout, getUser, forgotPassword };
