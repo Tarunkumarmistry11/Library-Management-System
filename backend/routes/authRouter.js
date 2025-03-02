@@ -1,9 +1,10 @@
 const express = require("express");
-const { register, verifyOTP } = require("../controllers/authController"); // Ensure correct import
+const { register, verifyOTP, login } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.post("/register", register); // Ensure `register` is correctly imported
-router.post("/verify-otp", verifyOTP); // Ensure `verifyOtp` is correctly imported
+router.post("/register", register);
+router.post("/verify-otp", verifyOTP);
+router.post("/login", login);
 
 module.exports = router;

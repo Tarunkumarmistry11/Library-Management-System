@@ -27,5 +27,4 @@ const sendVerificationCode = async (verificationCode, email, res) => {
   }
 };
 
-// TODO: Export the function for use in other files
 module.exports = { sendVerificationCode };

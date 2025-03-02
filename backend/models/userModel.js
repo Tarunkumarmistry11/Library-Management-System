@@ -49,8 +49,16 @@ userSchema.pre("save", async function (next) {
 // Generate Secure 6-digit Verification Code
 userSchema.methods.generateVerificationCode = function () {
   this.verificationCode = Math.floor(100000 + Math.random() * 900000);
-  this.verificationCodeExpire = Date.now() + 15 * 60 * 1000;
+  this.verificationCodeExpire = new Date(Date.now() + 15 * 60 * 1000); // Convert to Date object
   return this.verificationCode;
+};
+
+
+// Generate JWT Token
+userSchema.methods.generateToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRE || "7d",
+  });
 };
 
 // Hide Password in Query Results
@@ -60,11 +68,5 @@ userSchema.set("toJSON", {
     return ret;
   },
 });
-
-userSchema.methods.genrateToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
-}
 
 module.exports = mongoose.model("User", userSchema);
