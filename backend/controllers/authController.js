@@ -9,6 +9,7 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { sendVerificationCode } = require("../utils/sendVerificationCode");
 const { sendToken } = require("../utils/sendToken");
+const { generateForgotPasswordEmailTemplate } = require("../utils/emailTemplate");
 
 const register = catchAsyncErrors(async (req, res, next) => {
   try {

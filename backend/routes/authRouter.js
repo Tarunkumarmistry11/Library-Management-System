@@ -5,6 +5,7 @@ const {
   login,
   logout,
   getUser,
+  forgotPassword,
 } = require("../controllers/authController");
 const { isAuthenticated } = require("../middlewares/authMiddleware");
 
@@ -15,5 +16,6 @@ router.post("/verify-otp", verifyOTP);
 router.post("/login", login);
 router.get("/logout", isAuthenticated, logout);
 router.get("/me", isAuthenticated, getUser);
+router.post("/password/forgot", forgotPassword);
 
 module.exports = router;
