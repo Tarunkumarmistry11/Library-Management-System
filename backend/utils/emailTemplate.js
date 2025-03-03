@@ -37,7 +37,7 @@ const generateVerificationOtpEmailTemplate = (otpCode) => {
 
 // TODO: Generate a Forgot Password email template for sending the reset password URL to users
 
-const generateForgotPasswordEmailTemplate = (resetPassword) => {
+const generateForgotPasswordEmailTemplate = (resetPasswordUrl) => {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #000; color: #fff;">
       
@@ -46,11 +46,11 @@ const generateForgotPasswordEmailTemplate = (resetPassword) => {
       <p style="font-size: 16px; color: #ccc;">Dear User,</p>
       
       <p style="font-size: 16px; color: #ccc;">
-        To reset your password, please click the link below:
+        You requested to reset your password. Please click the button below to reset your password:
       </p>
   
       <div style="text-align: center; margin: 20px 0;">
-        <a href="${resetPassword}" 
+        <a href="${resetPasswordUrl}" 
           style="display: inline-block; font-size: 16px; font-weight: bold; color: #000; text-decoration: none; padding: 12px 20px; border: 3px solid #fff; border-radius: 5px; background-color: #fff;">
           Reset Password
         </a>
@@ -63,7 +63,7 @@ const generateForgotPasswordEmailTemplate = (resetPassword) => {
       <p style="font-size: 16px; color: #ccc;">
         If you did not request this email, please ignore it.
       </p>
-
+      <p style="font-size: 16px; color: #fff; word-wrap: break-word; ">${resetPasswordUrl}</p>
       <footer style="margin-top: 20px; text-align: center; font-size: 14px; color: #666;">
         <p>Thank you, <br>Bookworm Team</p>
   

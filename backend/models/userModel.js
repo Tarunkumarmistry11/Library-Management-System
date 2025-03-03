@@ -17,7 +17,10 @@ const userSchema = new mongoose.Schema(
         returned: { type: Boolean, default: false },
         bookTitle: String,
         borrowedDate: { type: Date, default: Date.now },
-        dueDate: { type: Date, default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) }, // 14 days
+        dueDate: {
+          type: Date,
+          default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        }, // 14 days
       },
     ],
     avatar: { public_id: String, url: String },
@@ -32,7 +35,9 @@ const userSchema = new mongoose.Schema(
 // Ensure Email is Unique Before Saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("email")) return next();
-  const existingUser = await mongoose.model("User").findOne({ email: this.email });
+  const existingUser = await mongoose
+    .model("User")
+    .findOne({ email: this.email });
   if (existingUser) {
     throw new Error("Email already exists. Try logging in.");
   }
@@ -54,7 +59,6 @@ userSchema.methods.generateVerificationCode = function () {
   return this.verificationCode;
 };
 
-
 // Generate JWT Token
 userSchema.methods.generateToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
@@ -70,11 +74,20 @@ userSchema.set("toJSON", {
   },
 });
 
-userSchema.methods.getResetPasswordToken = function() {
-  const resetToken = crypto.randomBytes(20).toString('hex');
-  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-  this.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutes
-  return resetToken;
-}
+userSchema.methods.getResetPasswordToken = function () {
+  // Generate a random token
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // Hash the token and store it in the database
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  // Set token expiration time (15 minutes from now)
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+  return resetToken; // Returning plain token to send via email
+};
 
 module.exports = mongoose.model("User", userSchema);

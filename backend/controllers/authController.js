@@ -9,7 +9,10 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { sendVerificationCode } = require("../utils/sendVerificationCode");
 const { sendToken } = require("../utils/sendToken");
-const { generateForgotPasswordEmailTemplate } = require("../utils/emailTemplate");
+const {
+  generateForgotPasswordEmailTemplate,
+} = require("../utils/emailTemplate");
+const sendEmail = require("../utils/sendEmail");
 
 const register = catchAsyncErrors(async (req, res, next) => {
   try {
@@ -178,29 +181,44 @@ const getUser = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// implement forgotPassword function
+// Implement forgotPassword function
 const forgotPassword = catchAsyncErrors(async (req, res, next) => {
+  if (!req.body.email) {
+    return next(new ErrorHandler("Please enter your email address", 400));
+  }
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(new ErrorHandler("User not found", 400));
+    return next(new ErrorHandler("User not found", 404));
   }
-  const resetToken = user.getResetToken();
+  const resetToken = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
   const resetPasswordUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
+
   const message = generateForgotPasswordEmailTemplate(resetPasswordUrl);
-  try{
-    await sendEmail({ email: user.email, subject: "Bookworm Library Management System Password Recovery", message });
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Bookworm Library Management System Password Recovery",
+      message,
+    });
+    console.log(sendEmail);
     res.status(200).json({
       success: true,
-      message: `Email sent to ${user.email} successfully.`,
+      message: `Email sent to ${user.email} successfully`,
     });
   } catch (error) {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(new ErrorHandler("Email could not be sent", 500));
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
-
-module.exports = { register, verifyOTP, login, logout, getUser, forgotPassword };
+module.exports = {
+  register,
+  verifyOTP,
+  login,
+  logout,
+  getUser,
+  forgotPassword,
+};
