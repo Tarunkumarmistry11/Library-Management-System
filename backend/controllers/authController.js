@@ -2,6 +2,9 @@
 // - Implement rate limiting for OTP verification attempts.
 // - Improve error handling for unexpected scenarios.
 // - Add logging for debugging registration and verification failures.
+// - Implement rate limiting for forgot password and reset password attempts.
+// - Improve security measures for forgot password and reset password flows.
+// - Add logging for debugging forgot password, reset password, and update password failures
 
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
 const { ErrorHandler } = require("../middlewares/errorMiddlewares");
@@ -14,6 +17,18 @@ const {
 } = require("../utils/emailTemplate");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
+
+// TODO:  
+// - Implement user registration functionality  
+// - Validate if all required fields (name, email, password) are provided  
+// - Check if the email is already registered and verified  
+// - Limit registration attempts for unverified users (max 5 attempts)  
+// - Ensure the password length is between 8 and 16 characters  
+// - Hash the password before saving it in the database  
+// - Generate a 6-digit verification code and set an expiration time (15 minutes)  
+// - Save the new user with the verification code  
+// - Send the verification code to the user's email  
+// - Return a success response upon registration  
 
 const register = catchAsyncErrors(async (req, res, next) => {
   try {
@@ -79,6 +94,16 @@ const register = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+// TODO:  
+// - Implement OTP verification functionality  
+// - Validate if both email and OTP are provided  
+// - Retrieve all user entries matching the email and sort by creation date  
+// - Ensure there are unverified users linked to the email  
+// - Keep only the latest unverified user and delete older unverified entries  
+// - Validate the OTP and check if it has expired  
+// - Mark the user as verified and clear the OTP fields upon successful verification  
+// - Return a success response with a token upon successful account verification  
+
 const verifyOTP = catchAsyncErrors(async (req, res, next) => {
   const { email, otp } = req.body;
 
@@ -136,7 +161,16 @@ const verifyOTP = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-//Implement the login function
+// TODO:  
+// - Implement login functionality  
+// - Validate email and password inputs  
+// - Normalize email to ensure case insensitivity  
+// - Fetch user from the database and include password field  
+// - Handle case where user does not exist  
+// - Hash and compare the provided password with the stored one  
+// - Return an error if the password is incorrect  
+// - Generate and send authentication token upon successful login  
+
 const login = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -162,7 +196,15 @@ const login = catchAsyncErrors(async (req, res, next) => {
   sendToken(user, 200, "Login successful", res);
 });
 
-//Implement the logout function
+// TODO:  
+// - Implement logout functionality  
+// - Clear the authentication token from cookies  
+// - Set the cookie expiration to the current time for immediate invalidation  
+// - Send a success response confirming logout  
+// - Implement getUser functionality  
+// - Retrieve the authenticated user's details from the request  
+// - Return the user information in the response  
+
 const logout = catchAsyncErrors(async (req, res, next) => {
   res.cookie("token", "", {
     expires: new Date(Date.now()),
@@ -182,7 +224,17 @@ const getUser = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Implement forgotPassword function
+// TODO:  
+// - Implement forgot password functionality  
+// - Validate if the email address is provided in the request  
+// - Check if the user exists in the database  
+// - Generate a reset password token for the user  
+// - Save the reset token and expiration time in the database  
+// - Construct a password reset URL using the generated token  
+// - Generate an email template for password recovery  
+// - Send the reset password email to the user  
+// - Handle errors during email sending and revert token changes if necessary  
+
 const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   if (!req.body.email) {
     return next(new ErrorHandler("Please enter your email address", 400));
@@ -215,7 +267,16 @@ const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-//Implement resetPassword function
+// TODO:  
+// - Implement reset password functionality  
+// - Validate if the reset token is provided in the request  
+// - Hash the token and check if a user exists with the corresponding token and expiration  
+// - Verify if the reset token is still valid (not expired)  
+// - Ensure the new password and confirm password match  
+// - Enforce password length constraints (between 8 and 16 characters)  
+// - Hash the new password before saving it in the database  
+// - Clear the reset password token and expiration fields after successful reset  
+// - Send a success response with a new authentication token  
 
 const resetPassword = catchAsyncErrors(async (req, res, next) => {
   const { token } = req.params;
@@ -254,7 +315,16 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
   sendToken(user, 200, "Password reset successful", res);
 });
 
-//Implement updatePassword function
+// TODO:  
+// - Implement update password functionality  
+// - Retrieve the user from the database and include the password field  
+// - Validate if all required fields (currentPassword, newPassword, confirmNewPassword) are provided  
+// - Verify if the provided current password matches the stored password  
+// - Enforce password length constraints (between 8 and 16 characters)  
+// - Ensure the new password and confirm password match  
+// - Hash the new password before saving it in the database  
+// - Save the updated password and send a success response  
+
 const updatePassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user.id).select("+password");
   const { currentPassword, newPassword, confirmNewPassword } = req.body;

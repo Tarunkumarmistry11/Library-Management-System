@@ -1,4 +1,10 @@
-// TODO: Generate an email template for sending verification OTP to users
+// TODO: Verification OTP Email Template  
+// - Create a visually distinct OTP display for easy readability  
+// - Ensure the OTP is valid for 15 minutes and mention it clearly  
+// - Use a professional, dark-themed email design  
+// - Add a disclaimer that the OTP should not be shared  
+// - Ensure the email is responsive and properly formatted  
+
 const generateVerificationOtpEmailTemplate = (otpCode) => {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #000; color: #fff;">
@@ -35,7 +41,12 @@ const generateVerificationOtpEmailTemplate = (otpCode) => {
     </div>`;
 };
 
-// TODO: Generate a Forgot Password email template for sending the reset password URL to users
+// TODO: Forgot Password Email Template  
+// - Provide a secure password reset link with a clear CTA button  
+// - Mention the expiration time of 15 minutes  
+// - Ensure the email is visually appealing and matches branding  
+// - Include a fallback display of the reset URL in case the button doesn’t work  
+// - Add a disclaimer that the link should not be shared  
 
 const generateForgotPasswordEmailTemplate = (resetPasswordUrl) => {
   return `
