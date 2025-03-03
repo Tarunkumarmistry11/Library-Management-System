@@ -1,6 +1,13 @@
 const nodemailer = require("nodemailer");
 
-// TODO: Send an email using Nodemailer with provided email details
+/**
+ * TODO:
+ * - Configure Nodemailer transporter with environment variables.
+ * - Define a function to send an email with provided email details.
+ * - Set email options including sender, recipient, subject, and message.
+ * - Handle errors when sending emails and log them appropriately.
+ * - Export the function for use in other modules.
+ */
 
 const sendEmail = async ({ email, subject, message }) => {
   try {

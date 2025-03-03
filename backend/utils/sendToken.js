@@ -1,3 +1,12 @@
+/**
+ * TODO:
+ * - Generate a JWT token for the authenticated user.
+ * - Set the token in an HTTP-only cookie with an expiration date.
+ * - Configure security options for production (secure flag, sameSite policy).
+ * - Send the token along with the user details and success response.
+ */
+
+
 const sendToken = (user, statusCode, message, res) => {
     const token = user.generateToken();
     
