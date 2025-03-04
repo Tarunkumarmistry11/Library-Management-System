@@ -1,8 +1,13 @@
+// TODO:  
+// - Develop book management functionalities, including adding, retrieving, and deleting books.  
+// - Ensure proper error handling and validation for input fields.  
+// - Utilize async error handling for better code maintainability.  
+
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
 const { ErrorHandler } = require("../middlewares/errorMiddlewares");
 const  Book  = require("../models/bookModel");
-// const { User } = require("../models/userModel");
 
+// TODO: Add a new book to the database with necessary validations.
 
 const addBook = catchAsyncErrors(async (req, res, next) => {
   const { title, author, description, price, quantity } = req.body;
@@ -23,6 +28,7 @@ const addBook = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+// TODO: Retrieve all books from the database.
 const getAllBook = catchAsyncErrors(async (req, res, next) => {
   const books = await Book.find();
   res.status(200).json({
@@ -30,6 +36,8 @@ const getAllBook = catchAsyncErrors(async (req, res, next) => {
     books,
   });
 });
+
+// TODO: Delete a specific book by ID with error handling.
 
 const deleteBook = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
