@@ -327,7 +327,7 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
 const updatePassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user.id).select("+password");
-  
+
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
@@ -337,9 +337,6 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
   if (!currentPassword || !newPassword || !confirmNewPassword) {
     return next(new ErrorHandler("Please enter all fields", 400));
   }
-
-  console.log("Entered Current Password:", currentPassword);
-  console.log("Stored Hashed Password:", user.password);
 
   const isPasswordMatched = await bcrypt.hash(currentPassword, user.password);
 
@@ -353,7 +350,9 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
     confirmNewPassword.length < 8 ||
     confirmNewPassword.length > 16
   ) {
-    return next(new ErrorHandler("Password must be between 8 and 16 characters", 400));
+    return next(
+      new ErrorHandler("Password must be between 8 and 16 characters", 400)
+    );
   }
 
   if (newPassword !== confirmNewPassword) {
@@ -369,7 +368,6 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
     message: "Password updated successfully",
   });
 });
-
 
 module.exports = {
   register,
