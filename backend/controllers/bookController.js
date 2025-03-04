@@ -1,10 +1,10 @@
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
 const { ErrorHandler } = require("../middlewares/errorMiddlewares");
-const { Book } = require("../models/bookModel");
-const { User } = require("../models/userModel");
+const  Book  = require("../models/bookModel");
+// const { User } = require("../models/userModel");
 
 
-const addBook = catchAsyncErrors(async (req, res) => {
+const addBook = catchAsyncErrors(async (req, res, next) => {
   const { title, author, description, price, quantity } = req.body;
   if (!title || !author || !description || !price || !quantity) {
     return next(new ErrorHandler("Please fill in all fields", 400));
@@ -23,7 +23,7 @@ const addBook = catchAsyncErrors(async (req, res) => {
   });
 });
 
-const getAllBook = catchAsyncErrors(async (req, res) => {
+const getAllBook = catchAsyncErrors(async (req, res, next) => {
   const books = await Book.find();
   res.status(200).json({
     success: true,
@@ -31,7 +31,7 @@ const getAllBook = catchAsyncErrors(async (req, res) => {
   });
 });
 
-const deleteBook = catchAsyncErrors(async (req, res) => {
+const deleteBook = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
   const book = await Book.findById(id);
   if (!book) {
