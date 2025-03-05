@@ -8,6 +8,7 @@ const connectDB = require("./database/db");
 const { errorMiddleware } = require("./middlewares/errorMiddlewares");
 const authRouter = require("./routes/authRouter");
 const bookRouter = require("./routes/bookRouter");
+const borrowRouter = require("./routes/borrowRouter");
 
 // Load environment variables from the specified config file
 dotenv.config({ path: "./config/config.env" });
@@ -38,6 +39,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bo
 // Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/book", bookRouter);
+app.use("/api/v1/borrow", borrowRouter);
 
 // Global error handling middleware
 app.use(errorMiddleware);
