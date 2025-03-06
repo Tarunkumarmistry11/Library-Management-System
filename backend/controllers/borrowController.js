@@ -28,23 +28,18 @@ const recordBorrowedBook = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Book is out of stock", 400));
   }
 
+  // Debugging: Log the current borrowed books of the user
+  console.log("User's borrowed books:", user.borrowedBooks);
+
   // Check if the user has already borrowed the book
   const isAlreadyBorrowed = user.borrowedBooks.find(
     (b) => b && b.bookId && b.bookId.toString() === id && b.returned === false
   );
-  if (isAlreadyBorrowed) {
-    return next(new ErrorHandler("Book is already borrowed", 400));
-  }
-  if(!isAlreadyBorrowed) {
-    return next(new ErrorHandler("Book is already borrowed", 400));
-  }
-  const existingBorrow = await Borrow.findOne({
-    user: user._id,
-    book: book._id,
-    returnDate: null,
-  });
 
-  if (existingBorrow) {
+  // Debugging: Log the result of the borrowed book check
+  console.log("Is already borrowed:", isAlreadyBorrowed);
+
+  if (isAlreadyBorrowed) {
     return next(new ErrorHandler("Book is already borrowed", 400));
   }
 
@@ -66,7 +61,7 @@ const recordBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   // Create a borrow record
   await Borrow.create({
     user: {
-      id: user._id,
+      id: user._id.toString(), // Ensure the id is a string
       name: user.name,
       email: user.email,
     },
@@ -93,15 +88,21 @@ const returnBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Find the user
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email, accountVerified: true });
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
 
+  // Debugging: Log the current borrowed books of the user
+  console.log("User's borrowed books:", user.borrowedBooks);
+
   // Find the borrowed book in the user's records
   const borrowedBook = user.borrowedBooks.find(
-    (b) => String(b.book) === String(bookId) && b.returned === false
+    (b) => b.bookId && b.bookId.toString() === bookId && b.returned === false
   );
+
+  // Debugging: Log the result of the borrowed book check
+  console.log("Borrowed book check result:", borrowedBook);
 
   if (!borrowedBook) {
     return next(new ErrorHandler("Book is not borrowed", 400));
@@ -125,10 +126,10 @@ const returnBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   );
   const borrow = await Borrow.findOne({
     book: bookId,
-    user: user._id, // Fix: Use user ID instead of "user.email"
+    "user.email": email,
     returnDate: null,
   });
-  console.log("FOUND BORROW RECORD", borrow);
+  console.log("FOUND BORROW RECORD:", borrow);
   if (!borrow) {
     return next(new ErrorHandler("Borrow record not found", 404));
   }
