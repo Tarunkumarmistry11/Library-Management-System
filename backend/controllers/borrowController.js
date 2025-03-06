@@ -30,9 +30,9 @@ const recordBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   
     // Check if the user has already borrowed the book
     const isAlreadyBorrowed = user.borrowedBooks.find(
-      (b) => b.book && b.book.toString() === id && b.returned === false
+      (b) => b && b.bookId && b.bookId.toString() === id && b.returned === false
     );
-    if (!isAlreadyBorrowed) {
+    if (isAlreadyBorrowed) {
       return next(new ErrorHandler("Book is already borrowed", 400));
     }
   
@@ -43,7 +43,8 @@ const recordBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   
     // Add borrowed book details to user
     user.borrowedBooks.push({
-      book: book._id,
+      bookId: book._id,
+      bookTitle: book.title,
       borrowedDate: new Date(),
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       returned: false,
@@ -52,7 +53,11 @@ const recordBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   
     // Create a borrow record
     await Borrow.create({
-      user: user._id,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
       book: book._id,
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       price: book.price,
@@ -60,7 +65,7 @@ const recordBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   
     res.status(200).json({
       success: true,
-      message: "Book borrowed successfully",
+      message: "Borrowed book recorded successfully.",
     });
   });
 
