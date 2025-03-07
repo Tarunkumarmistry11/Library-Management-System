@@ -8,8 +8,7 @@
  * @returns {Function} Middleware function that handles errors.
  */
 const catchAsyncErrors = (fn) => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-  
-  module.exports = catchAsyncErrors;
-  
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+module.exports = catchAsyncErrors;

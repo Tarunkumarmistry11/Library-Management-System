@@ -1,3 +1,12 @@
+/**
+ * TODO:
+ * - Define routes for borrowing and returning books.
+ * - Ensure authentication for all routes.
+ * - Allow only Admin users to record and view borrowed books.
+ * - Enable users to view their own borrowed books.
+ * - Provide a route for returning borrowed books.
+ */
+
 const express = require("express");
 const {
   borrowedBooks,

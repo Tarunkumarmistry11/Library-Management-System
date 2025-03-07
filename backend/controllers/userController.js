@@ -1,3 +1,12 @@
+/**
+ * TODO:
+ * - Fixed import for User model.
+ * - Ensured `req.files` is checked before accessing properties.
+ * - Added password length validation.
+ * - Verified uploaded file format before Cloudinary upload.
+ * - Implemented proper error handling for Cloudinary upload failures.
+ */
+
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
 const ErrorHandler = require("../middlewares/errorMiddlewares");
 const User = require("../models/userModel"); // Fixed import
@@ -13,7 +22,6 @@ const getAllUsers = catchAsyncErrors(async (req, res, next) => {
 });
 
 const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
-
   if (!req.files || Object.keys(req.files).length === 0) {
     return next(new ErrorHandler("Please upload a profile picture", 400));
   }
@@ -43,9 +51,12 @@ const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Upload to Cloudinary
-  const cloudinaryResponse = await cloudinary.uploader.upload(avatar.tempFilePath, {
-    folder: "LIBRARY_MANAGEMENT_SYSTEM"
-  });
+  const cloudinaryResponse = await cloudinary.uploader.upload(
+    avatar.tempFilePath,
+    {
+      folder: "LIBRARY_MANAGEMENT_SYSTEM",
+    }
+  );
 
   if (!cloudinaryResponse || cloudinaryResponse.error) {
     console.error(

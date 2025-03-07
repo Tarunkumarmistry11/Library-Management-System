@@ -1,3 +1,12 @@
+/**
+ * TODO:
+ * - Retrieve borrowed books for a user
+ * - Record a new borrowed book with validation
+ * - Prevent multiple borrowing of the same book
+ * - Manage stock updates upon borrowing/returning
+ * - Implement fine calculation for late returns
+ */
+
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
 const Borrow = require("../models/borrowModel");
 const Book = require("../models/bookModel");
@@ -126,7 +135,10 @@ const returnBorrowedBook = catchAsyncErrors(async (req, res, next) => {
   );
 
   // Debugging: Log the index of the borrowed book
-  console.log("Index of the borrowed book in user's records:", borrowedBookIndex);
+  console.log(
+    "Index of the borrowed book in user's records:",
+    borrowedBookIndex
+  );
 
   if (borrowedBookIndex === -1) {
     return next(new ErrorHandler("Book is not borrowed", 400));

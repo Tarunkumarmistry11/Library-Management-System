@@ -6,29 +6,34 @@
 // - Attach the user object to the request for further processing
 // - Call the next() function to proceed if authentication is successful
 
-const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
-const catchAsyncErrors = require('./catchAsyncError');
-const { ErrorHandler } = require('./errorMiddlewares');
+const jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
+const catchAsyncErrors = require("./catchAsyncError");
+const { ErrorHandler } = require("./errorMiddlewares");
 
-const isAuthenticated = catchAsyncErrors(async(req, res, next) => {
-    const { token } = req.cookies;
-    if (!token) {
-        return next(new ErrorHandler("User is not authenticated", 400));
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log(decoded);
-    req.user = await User.findById(decoded.id);
-    next();
+const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
+  const { token } = req.cookies;
+  if (!token) {
+    return next(new ErrorHandler("User is not authenticated", 400));
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  console.log(decoded);
+  req.user = await User.findById(decoded.id);
+  next();
 });
 
 const isAuthorized = (...roles) => {
-    return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
-            return next(new ErrorHandler(`Role (${req.user.role}) is not authorized to access this route`, 400));
-        }
-        next();
-    };
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ErrorHandler(
+          `Role (${req.user.role}) is not authorized to access this route`,
+          400
+        )
+      );
+    }
+    next();
+  };
 };
 
 module.exports = { isAuthenticated, isAuthorized };

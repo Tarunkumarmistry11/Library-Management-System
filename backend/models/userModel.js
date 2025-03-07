@@ -1,16 +1,15 @@
-// TODO:  
-// - Define Mongoose schema for User model  
-// - Ensure email uniqueness before saving  
-// - Hash password before saving  
-// - Generate and expire 6-digit verification codes  
-// - Implement JWT token generation for authentication  
-// - Hide password field in JSON responses  
-// - Implement reset password token generation and expiration  
-// - Define user roles ("Admin" and "User")  
-// - Store user avatar with public ID and URL  
-// - Manage borrowed books with tracking for return status and due dates  
-// - Ensure timestamps are included for user creation and updates 
-
+// TODO:
+// - Define Mongoose schema for User model
+// - Ensure email uniqueness before saving
+// - Hash password before saving
+// - Generate and expire 6-digit verification codes
+// - Implement JWT token generation for authentication
+// - Hide password field in JSON responses
+// - Implement reset password token generation and expiration
+// - Define user roles ("Admin" and "User")
+// - Store user avatar with public ID and URL
+// - Manage borrowed books with tracking for return status and due dates
+// - Ensure timestamps are included for user creation and updates
 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");

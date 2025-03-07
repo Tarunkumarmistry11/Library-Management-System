@@ -1,3 +1,12 @@
+/**
+ * TODO:
+ * - Schedule a cron job to run every 30 minutes.
+ * - Fetch borrowers with overdue books who haven't been notified.
+ * - Send email reminders to users about overdue books.
+ * - Mark users as notified after sending the email.
+ * - Log relevant information for debugging.
+ */
+
 const cron = require("node-cron");
 const Borrow = require("../models/borrowModel"); // Correct import statement for Borrow model
 const sendEmail = require("../utils/sendEmail");
@@ -11,7 +20,7 @@ const notifyUsers = () => {
         dueDate: { $lt: oneDayAgo },
         returnDate: null,
         notified: false,
-      }).populate('user'); // Populate the user field
+      }).populate("user"); // Populate the user field
 
       console.log(`Found ${borrowers.length} borrowers to notify.`); // Log the number of borrowers found
 

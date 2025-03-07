@@ -1,11 +1,11 @@
-// TODO:  
-// - Develop book management functionalities, including adding, retrieving, and deleting books.  
-// - Ensure proper error handling and validation for input fields.  
-// - Utilize async error handling for better code maintainability.  
+// TODO:
+// - Develop book management functionalities, including adding, retrieving, and deleting books.
+// - Ensure proper error handling and validation for input fields.
+// - Utilize async error handling for better code maintainability.
 
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
 const { ErrorHandler } = require("../middlewares/errorMiddlewares");
-const  Book  = require("../models/bookModel");
+const Book = require("../models/bookModel");
 
 // TODO: Add a new book to the database with necessary validations.
 

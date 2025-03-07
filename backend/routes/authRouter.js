@@ -1,14 +1,14 @@
-// TODO:  
-// - Set up authentication routes  
-// - Implement user registration (`/register`)  
-// - Implement OTP verification (`/verify-otp`)  
-// - Implement user login (`/login`)  
-// - Implement user logout (`/logout`) - requires authentication  
-// - Implement user profile retrieval (`/me`) - requires authentication  
-// - Implement forgot password functionality (`/password/forgot`)  
-// - Implement password reset functionality (`/password/reset/:token`)  
-// - Implement password update functionality (`/password/update`) - requires authentication  
-// - Ensure `isAuthenticated` middleware is applied to protected routes  
+// TODO:
+// - Set up authentication routes
+// - Implement user registration (`/register`)
+// - Implement OTP verification (`/verify-otp`)
+// - Implement user login (`/login`)
+// - Implement user logout (`/logout`) - requires authentication
+// - Implement user profile retrieval (`/me`) - requires authentication
+// - Implement forgot password functionality (`/password/forgot`)
+// - Implement password reset functionality (`/password/reset/:token`)
+// - Implement password update functionality (`/password/update`) - requires authentication
+// - Ensure `isAuthenticated` middleware is applied to protected routes
 
 const express = require("express");
 const {
