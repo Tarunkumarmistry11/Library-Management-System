@@ -12,6 +12,7 @@ const borrowRouter = require("./routes/borrowRouter");
 const expressFileUpload = require("express-fileupload");
 const userRouter = require("./routes/userRouter");
 const notifyUsers = require("./services/notifyUsers");
+const removeUnverifiedAccounts = require("./services/removeUnverifiedAccounts");
 const cloudinary = require("cloudinary").v2;
 
 // Load environment variables from the specified config file
@@ -19,15 +20,16 @@ dotenv.config({ path: "./config/config.env" });
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
   api_key: process.env.CLOUDINARY_CLIENT_API,
-  api_secret: process.env.CLOUDINARY_CLIENT_SECRET
+  api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
 });
-
-
 
 // Initialize the Express application
 const app = express();
 
+//services
 notifyUsers();
+removeUnverifiedAccounts();
+
 // Connect to MongoDB before setting up routes
 connectDB();
 
