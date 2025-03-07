@@ -9,13 +9,25 @@ const { errorMiddleware } = require("./middlewares/errorMiddlewares");
 const authRouter = require("./routes/authRouter");
 const bookRouter = require("./routes/bookRouter");
 const borrowRouter = require("./routes/borrowRouter");
+const expressFileUpload = require("express-fileupload");
+const userRouter = require("./routes/userRouter");
+const notifyUsers = require("./services/notifyUsers");
+const cloudinary = require("cloudinary").v2;
 
 // Load environment variables from the specified config file
 dotenv.config({ path: "./config/config.env" });
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
+  api_key: process.env.CLOUDINARY_CLIENT_API,
+  api_secret: process.env.CLOUDINARY_CLIENT_SECRET
+});
+
+
 
 // Initialize the Express application
 const app = express();
 
+notifyUsers();
 // Connect to MongoDB before setting up routes
 connectDB();
 
@@ -35,11 +47,13 @@ const PORT = process.env.PORT || 3000;
 app.use(cookieParser()); // Parse cookies from incoming requests
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
+app.use(expressFileUpload({ useTempFiles: true, tempFileDir: "/tmp/" })); // Parse file uploads
 
 // Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/book", bookRouter);
 app.use("/api/v1/borrow", borrowRouter);
+app.use("/api/v1/user", userRouter);
 
 // Global error handling middleware
 app.use(errorMiddleware);
