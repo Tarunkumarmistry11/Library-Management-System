@@ -1,3 +1,9 @@
+// TODO: Implement Home page with dynamic component rendering
+// - Added Home component with dynamic rendering based on selectedComponent state
+// - Included conditional rendering for UserDashboard, AdminDashboard, BookManagement, Catalog, Users, and MyBorrowedBooks components
+// - Integrated user authentication check and side menu toggle functionality
+
+
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
