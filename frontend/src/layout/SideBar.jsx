@@ -105,15 +105,17 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
           </button>
         </nav>
         <div className="px-6 py-4">
-          <button className="py-2 font-medium text-center bg-transparent rounded-md hover:cursor-pointer flex items-center justify-center space-x-5 mx-auto w-fit">
-            <img src={logoutIcon} alt="Icon" />
-            <span>Log Out</span>
+        <button
+            className="py-2 font-medium text-center bg-transparent rounded-md hover:cursor-pointer flex items-center justify-center space-x-5 mb-7 mx-auto w-fit"
+            onClick={handleLogout}
+          >
+            <img src={logoutIcon} alt="logout" /> <span>Log Out</span>
           </button>
         </div>
         <img
           src={closeIcon}
           alt="Close"
-          onClick={() => setIsSideBarOpen(!setIsSideBarOpen)}
+          onClick={() => setIsSideBarOpen(!isSideBarOpen)}
           className="h-fit w-fit absolute top-0 right-4 mt-4 block md:hidden"
         />
       </aside>
