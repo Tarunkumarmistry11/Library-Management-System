@@ -3,7 +3,6 @@
 // - Included conditional rendering for UserDashboard, AdminDashboard, BookManagement, Catalog, Users, and MyBorrowedBooks components
 // - Integrated user authentication check and side menu toggle functionality
 
-
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
@@ -22,9 +21,9 @@ const Home = () => {
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  // if (!isAuthenticated) {
-  //   return <Navigate to={"/login"} />;
-  // }
+  if (!isAuthenticated) {
+    return <Navigate to={"/login"} />;
+  }
 
   const displayComponent = () => {
     switch (selectedComponent) {
