@@ -111,9 +111,19 @@ const Register = () => {
               </div>
               <div className="block md:hidden font-semibold mt-5">
                 <p>Already have an Account?</p>
-                <Link to="/login" className="text-sm text-gray-500 hover:underline">Sign In</Link>
+                <Link
+                  to="/login"
+                  className="text-sm text-gray-500 hover:underline"
+                >
+                  Sign In
+                </Link>
               </div>
-              <button type="submit" className="border-2 mt-5 border-black w-full font-semibold text-white bg-black py-2 rounded-lg hover:bg-white hover:text-black cursor-pointer transition">SIGN UP</button>
+              <button
+                type="submit"
+                className="border-2 mt-5 border-black w-full font-semibold text-white bg-black py-2 rounded-lg hover:bg-white hover:text-black cursor-pointer transition"
+              >
+                SIGN UP
+              </button>
             </form>
           </div>
         </div>

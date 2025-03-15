@@ -20,7 +20,7 @@ const sendVerificationCode = async (verificationCode, email, res) => {
     });
 
     return res.status(200).json({
-      success: true, //Changed false -> true for successful response
+      success: true, 
       message: "Verification code sent successfully",
     });
   } catch (error) {
